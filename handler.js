@@ -1,7 +1,7 @@
 "use strict";
 const AWS = require("aws-sdk");
 
-module.exports.requestUploadURL = async (event, context, callback) => {
+module.exports.requestUploadURL = async (event) => {
   const s3 = new AWS.S3();
   const params = JSON.parse(event.body);
 
@@ -14,11 +14,13 @@ module.exports.requestUploadURL = async (event, context, callback) => {
 
   let uploadURL = s3.getSignedUrl("putObject", s3Params);
 
-  callback(null, {
-    statusCode: 200,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-    },
-    body: JSON.stringify({ uploadURL: uploadURL }),
+  return new Promise((resolve, reject) => {
+    resolve({
+      statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify({ uploadURL: uploadURL }),
+    });
   });
 };
