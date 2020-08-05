@@ -1,0 +1,40 @@
+service: leaver-app-api
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: "us-east-2"
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action: 
+        - "s3:*"
+      Resource: "arn:aws:s3:::leaver-app-uploads/*"
+
+functions:
+  requestUploadURL:
+    handler: handler.requestUploadURL
+    events:
+      - http:
+          path: requestUploadURL
+          method: POST
+          cors: true
+
+# you can add CloudFormation resource templates here
+resources:
+  Resources:
+    UploadBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: leaver-app-uploads
+        AccessControl: PublicRead
+        CorsConfiguration:
+          CorsRules:
+          - AllowedMethods:
+            - GET
+            - PUT
+            - POST
+            - HEAD
+            AllowedOrigins:
+            - "*"
+            AllowedHeaders:
+            - "*"
